@@ -327,7 +327,7 @@ public class EntryClassUi extends Composite {
 			}
 		});
 
-		// Status Panel
+		// Wires Panel
 		wires.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -345,7 +345,7 @@ public class EntryClassUi extends Composite {
 						contentPanelHeader.setText("Kura Wires");
 						contentPanelBody.clear();
 						contentPanelBody.add(wiresBinder);
-
+						wiresBinder.load();
 					}
 				});
 				renderDirtyConfigModal(b);

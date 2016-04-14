@@ -10,12 +10,16 @@ public class GwtWireConfig extends GwtBaseModel implements Serializable {
 
 	private static final long serialVersionUID = 3242500082719035361L;
 	
-	private List<String> m_wireEmitterPids;
-	private List<String> m_wireReceiverPids;
+	private List<String> m_emitterFactoryPids;
+	private List<String> m_receiverFactoryPids;
+	private List<String> m_components;
+	private String       m_wireOptions;
+	private String       m_graph;
 
 	public GwtWireConfig() {
-		m_wireEmitterPids = new ArrayList<String>();
-		m_wireReceiverPids = new ArrayList<String>();
+		m_emitterFactoryPids = new ArrayList<String>();
+		m_receiverFactoryPids = new ArrayList<String>();
+		m_components = new ArrayList<String>();
 	}
 	
 	@Override
@@ -27,27 +31,43 @@ public class GwtWireConfig extends GwtBaseModel implements Serializable {
 	}
 
 	public String getWireOptions() {
-		return get("wires");
+		return m_wireOptions;
 	}
 	
 	public void setWireOptions(String wires) {
-		set("wires", wires);
+		m_wireOptions = wires;
 	}
 	
-	public List<String> getWireEmitterPids() {
-		return m_wireEmitterPids;
+	public String getGraph() {
+		return m_graph;
 	}
 	
-	public void setWireEmitterPids(List<String> wireEmitterPids) {
-		m_wireEmitterPids = wireEmitterPids;
+	public void setGraph(String graph) {
+		m_graph = graph;
 	}
 	
-	public List<String> getWireReceiverPids() {
-		return m_wireReceiverPids;
+	public List<String> getEmitterFactoryPids() {
+		return m_emitterFactoryPids;
 	}
 	
-	public void setWireReceiverPids(List<String> wireReceiverPids) {
-		m_wireReceiverPids = wireReceiverPids;
+	public void setWireEmitterPids(List<String> emitterFactoryPids) {
+		m_emitterFactoryPids = emitterFactoryPids;
+	}
+	
+	public List<String> getReceiverFactoryPids() {
+		return m_receiverFactoryPids;
+	}
+	
+	public void setWireReceiverPids(List<String> receiverFactoryPids) {
+		m_receiverFactoryPids = receiverFactoryPids;
+	}
+	
+	public List<String> getComponents() {
+		return m_components;
+	}
+	
+	public void setComponents(List<String> components) {
+		m_components = components;
 	}
 
 }

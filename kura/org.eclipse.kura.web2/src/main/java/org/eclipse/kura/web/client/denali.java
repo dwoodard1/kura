@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 
 import org.eclipse.kura.web.client.messages.Messages;
 import org.eclipse.kura.web.client.ui.EntryClassUi;
+import org.eclipse.kura.web.client.ui.wires.WiresPanelUi;
 import org.eclipse.kura.web.client.util.FailureHandler;
 import org.eclipse.kura.web.shared.model.GwtGroupedNVPair;
 import org.eclipse.kura.web.shared.model.GwtSession;
@@ -78,6 +79,7 @@ public class denali implements EntryPoint
 		// load custom CSS/JS
 		loadCss("denali/skin/skin.css");
 		ScriptInjector.fromUrl("denali/skin/skin.js?v=1").inject(); // Make sure this request is not cached
+		WiresPanelUi.exportJSNIUpdateWireConfig();
 
 		gwtXSRFService.generateSecurityToken(new AsyncCallback<GwtXSRFToken> () {
 			@Override

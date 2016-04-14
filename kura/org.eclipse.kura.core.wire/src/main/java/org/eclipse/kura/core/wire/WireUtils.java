@@ -57,10 +57,10 @@ public class WireUtils {
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static List<String> getFactoriesAndInstances(ComponentContext ctx, String factoryPid, Class iface) {
+	public static List<String> getFactoriesAndInstances(BundleContext ctx, String factoryPid, Class iface) {
 		ArrayList<String> result = new ArrayList<String>();
 		// Iterate through the bundles
-		for (Bundle b : ctx.getBundleContext().getBundles()) {
+		for (Bundle b : ctx.getBundles()) {
 			// Search for a possible candidate for the factoryPid
 			if (factoryPid.startsWith(b.getSymbolicName())) {
 				// Try instantiating the factory. If it fails, move on to next
@@ -88,7 +88,7 @@ public class WireUtils {
 		// After the factories, iterate through available services implementing
 		// the passed interface
 		try {
-			Collection<ServiceReference<?>> services = ctx.getBundleContext().getServiceReferences(iface, null);
+			Collection<ServiceReference<?>> services = ctx.getServiceReferences(iface, null);
 			for (ServiceReference<?> service : services) {
 				result.add("INSTANCE|" + service.getProperty("service.pid"));
 			}

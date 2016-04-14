@@ -12,8 +12,6 @@
 package org.eclipse.kura.core.wire;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,14 +26,12 @@ import org.eclipse.kura.core.configuration.metatype.Tad;
 import org.eclipse.kura.core.configuration.metatype.Tocd;
 import org.eclipse.kura.core.configuration.metatype.Toption;
 import org.eclipse.kura.core.configuration.metatype.Tscalar;
-import org.eclipse.kura.multitons.MultitonRegistrationCallback;
 import org.eclipse.kura.multitons.MultitonService;
 import org.eclipse.kura.wires.WireEmitter;
 import org.eclipse.kura.wires.WireReceiver;
 import org.eclipse.kura.wires.WireService;
 import org.json.JSONException;
 import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.ComponentException;
 import org.osgi.service.wireadmin.Wire;
@@ -59,6 +55,7 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 	private static WireServiceOptions m_options;
 
 	private List<WireConfiguration> m_wireConfig;
+	private String m_graph;
 	private Map<String, Object> m_properties;
 
 	// private boolean shouldPersist = false;
@@ -128,6 +125,8 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 				m_wireConfig.add(conf);
 			}
 
+			m_graph = m_options.getGraph();
+			
 			m_serviceTracker = new WireSeviceTracker(m_ctx.getBundleContext(), this);
 			m_serviceTracker.open();
 
@@ -236,6 +235,13 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 				}
 			}
 
+			// Add JointJS Graph
+			Object graph = properties.get("graph");
+			if (graph != null) {
+				m_graph = (String) graph;
+				m_options.setGrpah(m_graph);
+			}
+			
 			// DELETE EXISTING WIRE
 			Object wiresDelete = properties.get("delete.wires");
 			if (wiresDelete != null) {
@@ -496,7 +502,7 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 		Set<String> factoryPids = m_configService.getComponentFactoryPids();
 
 		for (String factoryPid : factoryPids) {
-			emittersOptions.addAll(WireUtils.getFactoriesAndInstances(m_ctx, factoryPid, WireEmitter.class));
+			emittersOptions.addAll(WireUtils.getFactoriesAndInstances(m_ctx.getBundleContext(), factoryPid, WireEmitter.class));
 		}
 
 		Tad emitterTad = new Tad();
@@ -535,7 +541,7 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 		ArrayList<String> receiversOptions = new ArrayList<String>();
 
 		for (String factoryPid : factoryPids) {
-			receiversOptions.addAll(WireUtils.getFactoriesAndInstances(m_ctx, factoryPid, WireReceiver.class));
+			receiversOptions.addAll(WireUtils.getFactoriesAndInstances(m_ctx.getBundleContext(), factoryPid, WireReceiver.class));
 		}
 
 		Tad receiverTad = new Tad();
@@ -621,6 +627,16 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 			servicesTad.getOption().add(o);
 		}
 
+		Tad graphTad = new Tad();
+		graphTad.setName("graph");
+		graphTad.setId("graph");
+		graphTad.setType(Tscalar.STRING);
+		graphTad.setCardinality(0);
+		graphTad.setRequired(true);
+		graphTad.setDefault("");
+		graphTad.setDescription("JointJS Graph Model");
+		WiresOCD.addAD(graphTad);
+		
 		servicesTad.setDescription("Select an Instance from the list. The instance and all connected Wires will be deledet when submitting the changes.");
 		WiresOCD.addAD(servicesTad);
 
@@ -629,6 +645,7 @@ public class WireServiceImpl implements SelfConfiguringComponent, WireService {
 			// Put the json configuration into the properties so to persist them
 			// in the snapshot
 			m_properties.put("wires", m_options.toJsonString());
+			m_properties.put("graph", m_options.getGraph());
 			m_properties.put("delete.instances", "NONE");
 			m_properties.put("delete.wires", "NONE");
 			m_properties.put("receiver.pids", "NONE");

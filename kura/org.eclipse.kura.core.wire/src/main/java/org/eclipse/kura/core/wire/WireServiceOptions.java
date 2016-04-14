@@ -26,11 +26,14 @@ import org.json.JSONObject;
 public class WireServiceOptions 
 {
 	public static final String CONF_WIRES = "wires";
+	public static final String CONF_GRAPH = "graph";
 	
 	private static List<WireConfiguration> m_wireConfigurations;
+	private static String m_graph;
 	
-	private WireServiceOptions(List<WireConfiguration> confs) {	
+	private WireServiceOptions(List<WireConfiguration> confs, String graph) {	
 		m_wireConfigurations = confs;
+		m_graph = graph;
 	}	
 	
 	
@@ -43,6 +46,8 @@ public class WireServiceOptions
 		throws JSONException 
 	{
 		List<WireConfiguration> wireConfs = new CopyOnWriteArrayList<WireConfiguration>();
+		String graph = "";
+		
 		Object objWires = properties.get(CONF_WIRES);
 		if (objWires instanceof String) {
 
@@ -53,11 +58,25 @@ public class WireServiceOptions
 				wireConfs.add(WireConfiguration.newInstanceFromJson(jsonWire));
 			}
 		}
-		return new WireServiceOptions(wireConfs);
+		
+		Object objGraph = properties.get(CONF_GRAPH);
+		if (objGraph instanceof String) {
+			graph = (String) objGraph;
+		}
+		
+		return new WireServiceOptions(wireConfs, graph);
 	}
 
 	public List<WireConfiguration> getWires(){
 		return m_wireConfigurations;
+	}
+	
+	public String getGraph() {
+		return m_graph;
+	}
+	
+	public void setGrpah(String graph) {
+		m_graph = graph;
 	}
 
 	public String toJsonString() 

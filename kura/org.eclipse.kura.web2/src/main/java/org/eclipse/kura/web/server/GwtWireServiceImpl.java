@@ -135,7 +135,7 @@ public class GwtWireServiceImpl extends OsgiRemoteServiceServlet implements GwtW
 					
 					if (jCells.getJSONObject(i).getString("pid").equals("none")) {
 						s_logger.info("Creating new component: Factory PID -> " + jCells.getJSONObject(i).getString("factoryPid") + " | Instance Name -> " + jCells.getJSONObject(i).getString("label"));
-						String pid = configService.newConfigurableComponent(jCells.getJSONObject(i).getString("factoryPid"), null, true, jCells.getJSONObject(i).getString("label"));
+						String pid = configService.newConfigurableComponent(jCells.getJSONObject(i).getString("factoryPid"), null, false, jCells.getJSONObject(i).getString("label"));
 						jCells.getJSONObject(i).put("pid", pid);
 						idToPid.put(jCells.getJSONObject(i).getString("id"), jCells.getJSONObject(i).getString("pid"));
 					}

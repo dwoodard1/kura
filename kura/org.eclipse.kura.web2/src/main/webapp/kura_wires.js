@@ -21,11 +21,13 @@ var kuraWires = (function() {
 	function setup() {
 		// Setup element events. Cannot be done in ready as we need to wait for
 		// GWT entry point to be called
-		$("#btn-create-comp").on("click", createNewComponent);
-		$("#btn-config-save").on("click", saveConfig);
+
 
 		// Instantiate JointJS graph and paper
 		if (!initialized) {
+			$("#btn-create-comp").on("click", createNewComponent);
+			$("#btn-config-save").on("click", saveConfig);
+			
 			initialized = true;
 
 			// Set up custom elements

@@ -64,6 +64,7 @@ img.x-tree3-node-icon {
 *** Kura Wires
 ***
 *******************************/
+#factory-select-modal .modal-dialog { margin-top: 15%; }
 #wires-graph {
    position: relative;
    border: 1px solid gray;

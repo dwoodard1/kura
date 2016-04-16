@@ -19,8 +19,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:gwt="urn:import:org.gwtbootstrap3.client.ui.gwt">
 
 	<ui:style>
-	
-	.factory-select-modal { top: 10%; }
+
 	.factory-select-modal-header { display: none; }
 	.factory-select-modal-body { padding-bottom: 105px; }
 	
@@ -41,7 +40,7 @@
 			</b:Row>
 		</b:Column>
 		<b:Modal closable="true" fade="true" dataBackdrop="STATIC" dataKeyboard="true" b:id="factory-select-modal"
-					ui:field="factorySelectModal" addStyleNames="{style.factory-select-modal}">
+					ui:field="factorySelectModal">
 			<b:ModalHeader addStyleNames="{style.factory-select-modal-header}">
 			</b:ModalHeader>
 			<b:ModalBody addStyleNames="{style.factory-select-modal-body}">

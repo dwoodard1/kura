@@ -111,6 +111,7 @@ public class WiresPanelUi extends Composite {
 	private static void loadFactoriesList() {
 		// Create list of both Emitter and Receiver Factories
 		// avoiding duplicates
+		formFactoryPid.clear();
 		Set<String> tmpSet = new HashSet<String>(m_emitters);
 		tmpSet.addAll(m_receivers);
 		List<String> tmpList = new ArrayList<String>(tmpSet);
@@ -180,7 +181,6 @@ public class WiresPanelUi extends Composite {
 		// "models" hold all existing components in JointJS graph. If the PID is "none", then we need to create
 		// component in framework and set PID.
 		gwtXSRFService.generateSecurityToken(new AsyncCallback<GwtXSRFToken> () {
-			
 			@Override
 			public void onFailure(Throwable ex) {
 				EntryClassUi.hideWaitModal();
@@ -189,6 +189,7 @@ public class WiresPanelUi extends Composite {
 
 			@Override
 			public void onSuccess(GwtXSRFToken token) {
+				logger.info("hi");
 				gwtWireService.updateWireConfiguration(token, obj, new AsyncCallback<GwtWireConfig>() {
 					@Override
 					public void onFailure(Throwable caught) {

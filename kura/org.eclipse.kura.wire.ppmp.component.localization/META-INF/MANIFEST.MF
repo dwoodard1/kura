@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.eclipse.kura.wire.ppmp.component.localization
+Bundle-SymbolicName: org.eclipse.kura.wire.ppmp.component.localization;singleton:=true
+Bundle-License: Eclipse Public License v1.0
+Bundle-Version: 0.1.0.qualifier
+Bundle-Category: Localization
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Fragment-Host: org.eclipse.kura.localization;bundle-version="[1.0,2.0)"
+Export-Package: org.eclipse.kura.wire.ppmp.component.localization;version="0.1.0"

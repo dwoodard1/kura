@@ -73,4 +73,20 @@ public class KuraPpmpSeries {
 	public void setIntervalAdded(Boolean intervalAdded) {
 		this.intervalAdded = intervalAdded;
 	}
+	
+	public Result getMeasurementResult() {
+		return this.getMeasurementResult();
+	}
+	
+	public void setMeasurementResult(Result result) {
+		this.measurementResult = result;
+	}
+	
+	public String getMeasurementCode() {
+		return this.getMeasurementCode();
+	}
+	
+	public void setMeasurementCode(String measurementCode) {
+		this.measurementCode = measurementCode;
+	}
 }

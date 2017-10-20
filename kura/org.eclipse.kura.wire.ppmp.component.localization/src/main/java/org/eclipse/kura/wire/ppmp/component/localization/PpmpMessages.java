@@ -34,4 +34,13 @@ public interface PpmpMessages {
 	
 	@En("Wire Records cannot be null")
 	public String wireRecordsNonNull();
+	
+	@En("Error parsing JSON config")
+	public String errorParsingConfig();
+	
+	@En("Error converting PPMP message to JSON")
+	public String errorPpmpToJson();
+	
+	@En("Error issuing REST call")
+	public String errorPpmpRest();
 }

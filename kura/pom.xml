@@ -77,6 +77,8 @@
         <module>org.eclipse.kura.protocol.modbus</module>
         <module>org.eclipse.kura.stress</module>
         <module>org.eclipse.kura.util</module>
+		<module>org.eclipse.kura.wire.ppmp.component.localization</module>
+		<module>org.eclipse.kura.wire.ppmp.component.provider</module>
         <module>org.eclipse.kura.wire.script.filter.localization</module>
         <module>org.eclipse.kura.wire.script.filter.provider</module>
         <module>org.eclipse.kura.wire.h2db.component.provider</module>

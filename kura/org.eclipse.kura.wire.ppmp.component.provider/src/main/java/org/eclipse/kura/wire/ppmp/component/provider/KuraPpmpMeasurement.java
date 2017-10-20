@@ -25,7 +25,7 @@ import org.eclipse.iot.unide.ppmp.measurements.Measurements;
 import org.eclipse.iot.unide.ppmp.measurements.Measurements.Result;
 import org.eclipse.iot.unide.ppmp.measurements.MeasurementsWrapper;
 import org.eclipse.iot.unide.ppmp.measurements.SeriesMap;
-import org.eclipse.kura.type.BooleanValue;
+
 import org.eclipse.kura.type.DataType;
 import org.eclipse.kura.type.DoubleValue;
 import org.eclipse.kura.type.FloatValue;
@@ -81,8 +81,9 @@ public class KuraPpmpMeasurement {
 					
 					String regexKey = matcher.group(0);
 					String key = matcher.group(1);
-					logger.info("Key: {}", key);
+
 					if (properties.containsKey(key)) {
+						logger.debug("Updating PPMP info for key: {}", key);
 						properties.get(key);
 						s.addSeriesValue(regexKey, getTypedValue(properties.get(key).getType(), properties.get(key)));
 						

@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,6 +51,7 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
     
 	private static final String PPMP_CONFIG_KEY = "ppmp.config";
 	private static final String PPMP_POLL_INTERVAL_KEY = "ppmp.poll.interval";
+	private static final String PPMP_REST_MEASUREMENT_URL_KEY = "ppmp.rest.measurement.url";
 	
 	private WireHelperService wireHelperService;
 	private WireSupport wireSupport;
@@ -61,6 +61,7 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
 	
 	private int pollInterval = 5;
 	private int pollCount;
+	private String restMeasurementUrl;
 	
 	public void bindWireHelperService(WireHelperService wireHelperService) {
 		if (this.wireHelperService == null) {
@@ -92,9 +93,10 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
 		logger.info(messages.updating());
 		
 		this.ppmpConfig = Json.parse((String) properties.get(PPMP_CONFIG_KEY)).asObject();
+		this.pollCount = (int) properties.get(PPMP_POLL_INTERVAL_KEY);
+		this.restMeasurementUrl = (String) properties.get(PPMP_REST_MEASUREMENT_URL_KEY);
 		this.measurements = new ArrayList<KuraPpmpMeasurement>();
 		parsePpmpConfig();
-		this.pollCount = 1;
 
 		logger.info(messages.updatingDone());
 	}
@@ -103,9 +105,9 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
 	public void onWireReceive(WireEnvelope wireEnvelope) {
 		final List<WireRecord> wireRecords = wireEnvelope.getRecords();
 		requireNonNull(wireRecords, messages.wireRecordsNonNull());
-		logger.info(Integer.toString(this.pollCount));
+
 		for (WireRecord dataRecord : wireRecords) {
-			formatPpmp(dataRecord);
+			updatePpmp(dataRecord);
 		}
 		if (this.pollCount >= this.pollInterval) {
 			publishPpmpRecords();
@@ -142,7 +144,7 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
 
 		try {
 			// TODO: Parse other PPMP payloads (MachineMessage, ProcessMessage)
-			JsonArray measurements = this.ppmpConfig.get("measurements").asArray();
+			JsonArray measurements = this.ppmpConfig.get("mm").asArray();
 			JsonObject obj;
 			
 			for (JsonValue measurement : measurements) {
@@ -174,11 +176,11 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
 				this.measurements.add(tmpMeasurement);
 			}
 		} catch (Exception e) {
-			logger.error("Error parsing JSON config", e);
+			logger.error(messages.errorParsingConfig(), e);
 		}
 	}
 	
-	private void formatPpmp(WireRecord dataRecord) {
+	private void updatePpmp(WireRecord dataRecord) {
 		for (KuraPpmpMeasurement m : this.measurements) {
 			m.updateValue(dataRecord.getProperties());
 		}
@@ -187,47 +189,51 @@ public class PpmpProvider implements WireEmitter, WireReceiver, ConfigurableComp
 	private void publishPpmpRecords() {
 		for (KuraPpmpMeasurement m : this.measurements) {
 			PPMPPackager packager = new PPMPPackager();
+
+			String postBody;
 			try {
-				String postBody = packager.getMessage(m.getPpmpMeasurementWrapper(), true); 
+				postBody = packager.getMessage(m.getPpmpMeasurementWrapper(), true);
 				logger.debug(postBody);
-				
-				Authenticator.setDefault (new Authenticator() {
-				    protected PasswordAuthentication getPasswordAuthentication() {
-				        return new PasswordAuthentication ("username", "password".toCharArray());
-				    }
-				});
-				URL url = new URL("http://unide.eclipse.org/rest/v2/measurement?validate=true");
-				HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setDoOutput(true);
-				conn.setRequestMethod("POST");
-				conn.setRequestProperty("Content-Type", "application/json");
-				
-				OutputStream os = conn.getOutputStream();
-				os.write(postBody.getBytes());
-				os.flush();
-
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						(conn.getInputStream())));
-
-				String output;
-				System.out.println("Output from Server .... \n");
-				while ((output = br.readLine()) != null) {
-					System.out.println(output);
-				}
-
-				conn.disconnect();
-				
+				doRestMeasurementPublish(postBody);
 			} catch (JsonProcessingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				logger.error(messages.errorPpmpToJson(), e);
+			} 
 		}
+	}
+	
+	private void doRestMeasurementPublish(String postBody) {
+		
+		//TODO: Implement basic auth for REST calls
+		Authenticator.setDefault (new Authenticator() {
+		    protected PasswordAuthentication getPasswordAuthentication() {
+		        return new PasswordAuthentication ("username", "password".toCharArray());
+		    }
+		});
+		
+		URL url;
+		try {
+			url = new URL(this.restMeasurementUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json");
+			
+			OutputStream os = conn.getOutputStream();
+			os.write(postBody.getBytes());
+			os.flush();
+
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+			String output;
+			while ((output = br.readLine()) != null) {
+				logger.debug(output);
+			}
+
+			conn.disconnect();
+		} catch (IOException e) {
+			logger.error(messages.errorPpmpRest(), e);
+		}
+		
 	}
 
 }

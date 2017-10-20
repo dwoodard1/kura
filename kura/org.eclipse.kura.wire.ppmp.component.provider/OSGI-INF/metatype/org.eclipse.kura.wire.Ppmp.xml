@@ -12,6 +12,24 @@
          name="Javascript Filter" 
          description="A wire component that provides scrpiting functionalities in JavaScript.">
 
+        <AD id="ppmp.poll.interval"
+            name="ppmp.poll.interval"
+            type="Integer"
+            cardinality="0"
+            required="true"
+            default="5"
+            description="Number of Kura Wire Tick intervals before publishing.">
+        </AD>
+        
+        <AD id="ppmp.rest.measurement.url"
+            name="ppmp.rest.measurement.url"
+            type="String"
+            cardinality="0"
+            required="false"
+            default="http://127.0.0.1:8090/rest/v2/measurement?validate=true"
+            description="Rest endpoint for publishing measurement messages.">
+        </AD>
+        
         <AD id="ppmp.config"
             name="ppmp.config"
             type="String"
